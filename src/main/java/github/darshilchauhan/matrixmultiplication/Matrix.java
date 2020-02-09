@@ -27,13 +27,13 @@ public class Matrix {
         if (vals == null || vals[0] == null) {
             throw new NullPointerException("Matrix values are null");
         }
-        double[][] transposeVals = new double[vals[0].length][vals.length];
+        double[][] transposedVals = new double[vals.length][vals[0].length];
         for (int i = 0; i < vals.length; i++) {
             for (int j = 0; j < vals[0].length; j++) {
-                transposeVals[j][i] = vals[i][j];
+                transposedVals[j][i] = vals[i][j];
             }
         }
-        return new Matrix(transposeVals);
+        return new Matrix(vals);
     }
 
     /**
