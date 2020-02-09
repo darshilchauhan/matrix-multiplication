@@ -9,10 +9,13 @@ public class Matrix {
      * @param vals
      */
     public Matrix(double[][] vals) {
-        this.vals = vals;
-        if (vals == null || vals[0] == null) {
-            throw new NullPointerException("Matrix values are null");
+        throwExceptionIfHasNull(vals);
+        for (int i = 1; i < vals.length; i++) {
+            if (vals[i].length != vals[0].length) {
+                throw new IllegalArgumentException("Row lengths are not same for matrix input");
+            }
         }
+        this.vals = vals;
         this.numRows = vals.length;
         this.numCols = vals[0].length;
     }
@@ -24,16 +27,30 @@ public class Matrix {
      * @return Matrix
      */
     public static Matrix getTransposeMatrix(double[][] vals) {
-        if (vals == null || vals[0] == null) {
-            throw new NullPointerException("Matrix values are null");
-        }
-        double[][] transposedVals = new double[vals.length][vals[0].length];
+        throwExceptionIfHasNull(vals);
+        double[][] transposeVals = new double[vals[0].length][vals.length];
         for (int i = 0; i < vals.length; i++) {
             for (int j = 0; j < vals[0].length; j++) {
-                transposedVals[j][i] = vals[i][j];
+                transposeVals[j][i] = vals[i][j];
             }
         }
-        return new Matrix(vals);
+        return new Matrix(transposeVals);
+    }
+
+    /**
+     * Throws exception if matrix itself, or any row is null. Intended to be used
+     * only during creation of the object (including creation by static factories),
+     * therefore it is static.
+     * 
+     * @param vals
+     */
+    private static void throwExceptionIfHasNull(double[][] vals) {
+        if (vals == null)
+            throw new IllegalArgumentException("Matrix input is null");
+        for (int i = 0; i < vals.length; i++) {
+            if (vals[i] == null)
+                throw new IllegalArgumentException("Matrix input has " + i + "th row to be null");
+        }
     }
 
     /**
@@ -41,7 +58,7 @@ public class Matrix {
      */
     private void throwExceptionIfRowOutOfBound(int row) {
         if (row < 0 || row >= this.numRows) {
-            throw new IndexOutOfBoundsException("Row index " + row + " out of bound for the matrix");
+            throw new ArrayIndexOutOfBoundsException("Row index " + row + " out of bound for the matrix");
         }
     }
 
@@ -50,7 +67,7 @@ public class Matrix {
      */
     private void throwExceptionIfColOutOfBound(int col) {
         if (col < 0 || col >= this.numCols) {
-            throw new IndexOutOfBoundsException("Column index " + col + " out of bound for the matrix");
+            throw new ArrayIndexOutOfBoundsException("Column index " + col + " out of bound for the matrix");
         }
     }
 
