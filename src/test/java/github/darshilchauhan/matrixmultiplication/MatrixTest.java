@@ -13,30 +13,22 @@ import org.junit.jupiter.api.TestMethodOrder;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MatrixTest {
     private static final double[][] vals = { { 1.1, 3, 5 }, { 2, 4, 6 } };
-    private static final Matrix mat = new Matrix(vals);
+    private static final Matrix mat = Matrix.getMatrix(vals);
 
     @Test
     @Order(1)
-    void nullMatrixTest() {
-        double[][] nullVals = null;
-        assertThrows(IllegalArgumentException.class, () -> new Matrix(nullVals));
+    void illegalArgumentsTest() {
+        assertThrows("Null matrix test", IllegalArgumentException.class, () -> Matrix.getMatrix(null));
+        assertThrows("Null row test", IllegalArgumentException.class, () -> Matrix.getMatrix(new double[][] { null }));
+        assertThrows("Zero length row test", IllegalArgumentException.class, () -> Matrix.getMatrix(new double[0][]));
+        assertThrows("Unequal row lengths", IllegalArgumentException.class,
+                () -> Matrix.getMatrix(new double[][] { { 1, 2, 3 }, { 4, 5 } }));
     }
 
     @Test
-    @Order(2)
-    void nullRowTest() {
-        double[][] nullRowVals = new double[1][];
-        nullRowVals[0] = null;
-        assertThrows(IllegalArgumentException.class, () -> new Matrix(nullRowVals));
-    }
-
-    @Test
-    @Order(3)
-    void unequalRowsTest() {
-        double[][] unequalRowsVals = new double[2][];
-        unequalRowsVals[0] = new double[] { 1, 2, 3 };
-        unequalRowsVals[1] = new double[] { 4, 5 };
-        assertThrows(IllegalArgumentException.class, () -> new Matrix(unequalRowsVals));
+    void getNumRowsColsTest() {
+        assertEquals(2, mat.getNumRows());
+        assertEquals(3, mat.getNumCols());
     }
 
     @Test
@@ -48,11 +40,21 @@ class MatrixTest {
     }
 
     @Test
-    void getRowTest() {
-        assertArrayEquals(vals[0], mat.getRow(0), 0.0001);
-        assertArrayEquals(vals[1], mat.getRow(1), 0.0001);
-        assertThrows(IndexOutOfBoundsException.class, () -> mat.getRow(2));
+    void zeroMatrixConstructorTest() {
+        Matrix newMat = new Matrix(3, 4);
+        for (int i = 0; i < newMat.getNumRows(); i++) {
+            for (int j = 0; j < newMat.getNumCols(); j++) {
+                assertEquals(0, newMat.getElement(i, j), 0.0001);
+            }
+        }
     }
+
+    // @Test
+    // void getRowTest() {
+    // assertArrayEquals(vals[0], mat.getRow(0), 0.0001);
+    // assertArrayEquals(vals[1], mat.getRow(1), 0.0001);
+    // assertThrows(IndexOutOfBoundsException.class, () -> mat.getRow(2));
+    // }
 
     @Test
     void get2DArrayTest() {
@@ -74,7 +76,7 @@ class MatrixTest {
 
     @Test
     void setElementTest() {
-        Matrix newMat = new Matrix(new double[][] { { -2.5 } });
+        Matrix newMat = Matrix.getMatrix(new double[][] { { -2.5 } });
         newMat.setElement(0, 0, -1);
         assertEquals(-1, newMat.getElement(0, 0), 0.0001);
     }
