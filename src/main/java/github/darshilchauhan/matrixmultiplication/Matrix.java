@@ -1,5 +1,15 @@
 package github.darshilchauhan.matrixmultiplication;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Matrix {
     private double[][] vals;
     private final int numRows;
@@ -166,5 +176,67 @@ public class Matrix {
      */
     public int getNumCols() {
         return this.numCols;
+    }
+
+    public void saveToFile(String filePath) throws IOException {
+        if (filePath == null)
+            throw new IllegalArgumentException("Cannot store to a null file");
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
+                builder.append(Double.toString(vals[i][j]));
+                if (j < numCols - 1)
+                    builder.append(",");
+            }
+            builder.append("\n");
+        }
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+        writer.write(builder.toString());
+        writer.flush();
+        writer.close();
+    }
+
+    public static Matrix readFromFile(String filePath) throws FileNotFoundException, IOException {
+        if (filePath == null)
+            throw new IllegalArgumentException("Cannot read from a null file");
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String line = "";
+        List<List<Double>> valsList = new ArrayList<List<Double>>();
+        int rowLength = -1;
+        while ((line = reader.readLine()) != null) {
+            List<Double> rowList = new ArrayList<Double>();
+            String[] valsArray = line.split(",");
+            if (rowLength == -1) {
+                if (valsArray.length == 0) {
+                    throw new IllegalArgumentException("No values in a line, cannot read from file");
+                }
+                rowLength = valsArray.length;
+            } else {
+                if (rowLength != valsArray.length) {
+                    throw new IllegalArgumentException("Mismatching lengths of rows, cannot read from file");
+                }
+            }
+            for (String val : valsArray) {
+                rowList.add(Double.parseDouble(val));
+            }
+            valsList.add(rowList);
+        }
+        reader.close();
+
+        if (valsList.size() == 0) {
+            throw new IllegalArgumentException("No values in file, cannot read from it");
+        }
+        double[][] vals = new double[valsList.size()][valsList.get(0).size()];
+        int i = 0;
+        for (List<Double> rowList : valsList) {
+            int j = 0;
+            for (Double val : rowList) {
+                if (val == null)
+                    throw new IllegalArgumentException("Some value in file is null instead of double");
+                vals[i][j++] = val.doubleValue();
+            }
+            i++;
+        }
+        return new Matrix(vals);
     }
 }
