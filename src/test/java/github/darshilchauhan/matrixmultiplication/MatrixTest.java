@@ -90,6 +90,8 @@ class MatrixTest {
         assertThrows("Saving to file in a non-existent folder", IOException.class,
                 () -> mat.saveToFile("non-existent-folder/file.csv"));
         mat.saveToFile("target/test-matrix.csv");
+        Matrix testMatrix = Matrix.readFromFile("target/test-matrix.csv");
+        assertArrayEquals(vals, testMatrix.get2DArray());
     }
 
     @Test
