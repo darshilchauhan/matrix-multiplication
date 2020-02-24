@@ -79,6 +79,18 @@ public class Matrix {
         return new Matrix(transposeVals);
     }
 
+    public static Matrix getTransposeMatrix(Matrix inputMatrix) {
+        if (inputMatrix == null)
+            throw new IllegalArgumentException("Input matrix is null");
+        double[][] transposeVals = new double[inputMatrix.numCols][inputMatrix.numRows];
+        for (int i = 0; i < inputMatrix.numRows; i++) {
+            for (int j = 0; j < inputMatrix.numCols; j++) {
+                transposeVals[j][i] = inputMatrix.getElement(i, j);
+            }
+        }
+        return new Matrix(transposeVals);
+    }
+
     /**
      * Throws exception if matrix itself, or any row is null. Intended to be used
      * only during creation of the object (including creation by static factories),
