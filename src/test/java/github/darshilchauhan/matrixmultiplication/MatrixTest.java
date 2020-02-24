@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -79,6 +82,30 @@ class MatrixTest {
         Matrix newMat = Matrix.getMatrix(new double[][] { { -2.5 } });
         newMat.setElement(0, 0, -1);
         assertEquals(-1, newMat.getElement(0, 0), 0.0001);
+    }
+
+    @Test
+    void saveToFileTest() throws IOException {
+        assertThrows("Saving to null file", IllegalArgumentException.class, () -> mat.saveToFile(null));
+        assertThrows("Saving to file in a non-existent folder", IOException.class,
+                () -> mat.saveToFile("non-existent-folder/file.csv"));
+        mat.saveToFile("target/test-matrix.csv");
+    }
+
+    @Test
+    void readFromFileTest() throws IOException, FileNotFoundException {
+        String testFolder = "resources/readMatrixFromFileTests/";
+        assertThrows("Reading from non-existent file", FileNotFoundException.class,
+                () -> Matrix.readFromFile(testFolder + "nonExistent.csv"));
+        assertThrows("Reading from empty matrix", IllegalArgumentException.class,
+                () -> Matrix.readFromFile(testFolder + "emptyMatrix.csv"));
+        assertThrows("Reading from empty row matrix", IllegalArgumentException.class,
+                () -> Matrix.readFromFile(testFolder + "emptyRowMatrix.csv"));
+        assertThrows("Reading from matrix with unequal lengths of rows", IllegalArgumentException.class,
+                () -> Matrix.readFromFile(testFolder + "unequalLengthRowMatrix.csv"));
+        assertThrows("Reading from matrix with null value", IllegalArgumentException.class,
+                () -> Matrix.readFromFile(testFolder + "hasNullValueMatrix.csv"));
+        Matrix sampleMatrix = Matrix.readFromFile(testFolder + "sampleMatrix.csv");
     }
 
 }
