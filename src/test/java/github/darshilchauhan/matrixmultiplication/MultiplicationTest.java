@@ -34,11 +34,4 @@ class MultiplicationTest {
         double[][] expectedVals = new double[][] { { 22, 28 }, { 49, 64 } };
         assertArrayEquals(expectedVals, resultVals, "Multiplication gives unexpected values as result");
     }
-
-    @Test
-    void bigMatricesTest() {
-        int leftMatRows = 20000;
-        int leftMatCols = 50000;
-        // int
-    }
 }
